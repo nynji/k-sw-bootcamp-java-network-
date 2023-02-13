@@ -3,9 +3,17 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 public abstract class Pokemon {
-    protected String owner;
-    protected List<String> skills;
+    private String owner;  //private 로 바꾸고 getter setter 사용하기
+    private List<String> skills;
     public static int count = 0;
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public List<String> getSkills() {
+        return skills;
+    }
 
     public Pokemon(String owner, String skills) {
         this.owner = owner;
