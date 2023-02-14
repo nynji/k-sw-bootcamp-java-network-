@@ -1,26 +1,15 @@
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.UnknownHostException;
+import java.net.*;
 
 public class Day21 {
     public static void main(String[] args) {
-        try {
-            URL url = new URL("http://www.inha.ac.kr");
-            URLConnection urlConnection = url.openConnection();
-            BufferedReader br = new BufferedReader(
-                    new InputStreamReader(urlConnection.getInputStream()));
-            String line;
-            while ((line = br.readLine()) != null) {
-                System.out.println(line);
-            }
-            br.close();
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e)
+        try ( ServerSocket serverSocket = new ServerSocket(6000)){ //중괄호 전 소괄호 : 객체 생성 후 try 끝나면 close 없이 자동으로 메모리에서 제거됨 (python with구문과 비슷)
+            System.out.println("Waiting for connection.....");
+            Socket clientSocket =
+                    serverSocket.accept();
+            System.out.println("Connected to client");
+        } catch (IOException ex) {
             // Handle exceptions
-        } catch (IOException ex){
-            System.out.println("입출력오류 ");
         }
     }
 }
