@@ -3,7 +3,7 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-class One{
+class One{ // new 없이 객체 생성
     private One(){
     }
     public static One produceOneInstance(){
@@ -11,7 +11,7 @@ class One{
     }
 }
 
-public class Test {
+public class Test {  // 주소 찾기
     public static void main(String[] args) {
         //One o = new One();
         One o1 = One.produceOneInstance();
