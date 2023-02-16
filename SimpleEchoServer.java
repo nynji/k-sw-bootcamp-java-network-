@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Objects;
+import java.util.StringTokenizer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
@@ -47,6 +48,47 @@ public class SimpleEchoServer implements Runnable {
         ) {
             String inputLine;
             while ((inputLine = br.readLine()) != null) {
+                // 내 코드.. (계산기 서버 만들기)
+//                int count = 0;
+//                StringTokenizer st = new StringTokenizer(inputLine, "+-*/", true);
+//                while(st.hasMoreTokens()){
+//                    System.out.println(st.nextToken());
+//                }
+                try{
+                    StringTokenizer st = new StringTokenizer(inputLine,"+-*/", true);
+                    int result = 0, operand = 0;
+                    char operator = '+';
+
+                    while(st.hasMoreTokens()){
+                        String token = st.nextToken().trim(); // trim() : python strip과 비슷,
+
+                        if("+-*/".indexOf(token) >= 0){ //indexOf :
+                            operator = token.charAt(0);
+                        }else{
+                            operand = Integer.parseInt(token);
+                            switch (operator){
+                                case '+':
+                                    result = result + operand;
+                                    break;
+                                case '-':
+                                    result = result - operand;
+                                    break;
+                                case '*':
+                                    result = result * operand;
+                                    break;
+                                case '/':
+                                    result = result / operand;
+                                    break;
+
+                            }
+                        }
+                    }
+                    out.println(inputLine + "=" + result);
+
+                }catch (NumberFormatException err){
+                    out.println("유효하지 않은 입력 값 입니다");
+
+                }
                 System.out.println("["+Thread.currentThread()+"]"+ "클라이언트가 보낸 메세지 : " + Thread.currentThread() + "] :" + inputLine);
                         out.println(inputLine);
             }
