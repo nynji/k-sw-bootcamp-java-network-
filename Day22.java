@@ -1,35 +1,34 @@
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.*;
+import java.nio.ByteBuffer;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 import java.util.Date;
 
 public class Day22 {
     public static void main(String args[]) {
-        System.out.println("멀티캐스트 타임 서버");
-                DatagramSocket serverSocket = null;  //UDP
+        System.out.println("NIO 타임 서버");
         try {
-            serverSocket = new DatagramSocket();
-            while (true) {
-                String dateText = new Date().toString();
-                byte[] buffer = new byte[256];
-                buffer = dateText.getBytes();
-
-                InetAddress group = InetAddress.getByName("224.0.0.7");
-                DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, 10000); //패킷 : 을 날림
-                serverSocket.send(packet);
-                System.out.println("전송된 시간: " + dateText);
-                try {
-                    Thread.sleep(1000);  // 1초 단위 딜레이, Thread.sleep은 try구문이 반드시 필요하다
-                } catch (InterruptedException ex) {
-                    throw new RuntimeException(ex);
-                    // Handle exception
+            ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+            serverSocketChannel.socket().bind(new InetSocketAddress(5000));
+            while (true){
+                System.out.println("클라이언트 접속 대기중 ...");
+                SocketChannel sc = serverSocketChannel.accept();
+                
+                //if (sc != null){
+                    String dt = "날짜: " + new Date(System.currentTimeMillis());
+                //}
+                ByteBuffer buf = ByteBuffer.allocate(64);
+                buf.put(dt.getBytes());
+                buf.flip();
+                while (buf.hasRemaining()) {
+                    sc.write(buf);
                 }
-            }
-        } catch (IOException ex) {
-            // Handle exception
+                System.out.println("전송됨: " + dt);
         }
+    } catch (IOException ex) {
+            System.out.println("입출력 예외 발생");
+    }
 
         }
 }

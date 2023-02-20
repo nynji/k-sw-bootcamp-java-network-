@@ -1,29 +1,30 @@
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
+import java.net.*;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
 
 public class TimeClient {
-    //MultiCast Client
-    public static void main(String args[]) {
-        System.out.println("멀티 캐스트 타임 클라이언트");
-        try (MulticastSocket socket = new MulticastSocket(10000)) {
-            InetAddress group = InetAddress.getByName("224.0.0.7");
-            socket.joinGroup(group);
-            System.out.println("멀티캐스트 타임 서버 그룹에 조인 완료");
-            byte[] buffer = new byte[256];
-            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-            for (int i = 0; i < 5; i++) {
-                socket.receive(packet);
-                String received = new String(packet.getData());
-                System.out.println(received.trim());
+    //NIO MultiCast Client
+    public static void main(String[] args) {
+        SocketAddress address = new InetSocketAddress("127.0.0.1", 5000);
+        try (SocketChannel socketChannel = SocketChannel.open(address)) {
+            ByteBuffer byteBuffer = ByteBuffer.allocate(64);  // NON DIRECT
+            int bytesRead =
+                    socketChannel.read(byteBuffer);
+            while (bytesRead > 0) {
+                byteBuffer.flip();
+                while (byteBuffer.hasRemaining())
+                {
+                    System.out.print((char)
+                            byteBuffer.get());
+                }
+                System.out.println();
+                bytesRead =
+                        socketChannel.read(byteBuffer);
             }
 
-            socket.leaveGroup(group); // 멀티캐스트 타임 서버 탈퇴
         } catch (IOException ex) {
-            System.out.println("ㅇ");
-            // Handle exception
+            ex.printStackTrace();
         }
-        System.out.println("멀티 캐스트 타임 클라이언트 종료됨");
     }
 }
